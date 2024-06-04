@@ -1,117 +1,188 @@
-import React from 'react';
-import { View, ScrollView, Text, StyleSheet, StatusBar, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet } from 'react-native';
+import { Gap, RowTable, Text } from '../../components';
+import satellite from '../../services/satellite';
 
 export default function LaporanPenggunaan() {
+  const monthName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const valDate = new Date();
+  let valDdate = valDate.getDate();
+  let valMonth = monthName[valDate.getMonth()];
+  let valYear = valDate.getFullYear();
+
+  const [dataReport, setDataReport] = useState([]);
+
+  const fetchDataReport = async () => {
+    try {
+      const response = await satellite.get(`/bahanbaku`);
+      console.log('bahanbaku', response.status);
+      if (response.status === 200) {
+        setDataReport(response.data.data);
+      }
+    } catch (error) {
+      console.error('Errorserver:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataReport();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.header}>Laporan Penggunaan Bahan Baku</Text>
-        <Text style={styles.welcomeText}>Hi Owner or MO, Welcome in Dashboard!</Text>
-        <View style={styles.datePickerContainer}>
-          <TextInput style={styles.datePicker} placeholder="mm/dd/yyyy" />
-          <Text style={styles.dateSeparator}>s/d</Text>
-          <TextInput style={styles.datePicker} placeholder="mm/dd/yyyy" />
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Tampilkan</Text>
-          </TouchableOpacity>
+    <>
+      <StatusBar backgroundColor={'#f8f9fa'} barStyle={'dark-content'} />
+      <View style={styles.page}>
+        <View style={styles.containerHeader}>
+          <Text style={styles.titleHeader}>Atma Kitchen</Text>
+          <Text style={styles.subTitleHeader}>JL. CentralPark No. 10 Yogyakarta</Text>
         </View>
-        <Gap height={20} />
-        <View style={[styles.row, styles.headerRow]}>
-          <Text style={[styles.cell, styles.headerCell]}>Nama Bahan</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Satuan</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Jumlah Penggunaan</Text>
+        <Gap height={12} />
+        <View style={styles.containerSubHeader}>
+          <Text style={styles.titleSubHeader}>Laporan Penggunaan Bahan Baku</Text>
+          <Gap height={3} />
+          <Text style={styles.subTitleHeader}>Bulan : {valMonth}</Text>
+          <Text style={styles.subTitleHeader}>Tahun : {valYear}</Text>
+          <Text style={styles.subTitleHeader}>Tanggal Cetak : {valDdate + ' ' + valMonth + ' ' + valYear}</Text>
         </View>
-        <RowTable namaBahan="Gula Pasir" satuan="kg" jumlahPenggunaan="496" />
-        <RowTable namaBahan="Susu Bubuk" satuan="kg" jumlahPenggunaan="490" />
-        <RowTable namaBahan="Mentega" satuan="kg" jumlahPenggunaan="480" />
-        <RowTable namaBahan="Telur Ayam" satuan="butir" jumlahPenggunaan="250" />
-        <RowTable namaBahan="Cokelat Bubuk" satuan="kg" jumlahPenggunaan="100" />
-        <RowTable namaBahan="Keju Cheddar" satuan="kg" jumlahPenggunaan="100" />
-        <RowTable namaBahan="Ragi Instan" satuan="kg" jumlahPenggunaan="200" />
-        <RowTable namaBahan="Vanili" satuan="kg" jumlahPenggunaan="150" />
-      </ScrollView>
-    </View>
+        <Gap height={16} />
+        <View style={styles.containerHeaderTable}>
+          <View style={[styles.boxTable, styles.textHeaderNo]}>
+            <Text style={styles.titleHeaderTable}>No</Text>
+          </View>
+          <View style={[styles.boxTable, styles.flex3]}>
+            <Text style={styles.titleHeaderTable}>Nama Bahan</Text>
+          </View>
+          <View style={[styles.boxTable, styles.flex]}>
+            <Text style={styles.titleHeaderTable}>Total</Text>
+          </View>
+          <View style={[styles.boxTable, styles.flex2]}>
+            <Text style={styles.titleHeaderTable}>Satuan</Text>
+          </View>
+        </View>
+          <ScrollView style={styles.flex}>
+            {dataReport.length === 0 ? (
+              <View style={styles.containerEmpty}>
+                <Text style={styles.textEmpty}>Kosong</Text>
+              </View>
+            ) : (
+              dataReport.map((item, index) => {
+                return (
+                  <RowTable
+                    key={index}
+                    no={index + 1}
+                    name={item?.nama_bahan_baku}
+                    total_digunakan={item?.total_digunakan} 
+                    satuan={item?.satuan_bahan_baku}
+                  />
+                );
+              })
+            )}
+            <Gap height={16} />
+          </ScrollView>
+      </View>
+    </>
   );
 }
 
-const RowTable = ({ namaBahan, satuan, jumlahPenggunaan }) => {
-  return (
-    <View style={styles.row}>
-      <Text style={styles.cell}>{namaBahan}</Text>
-      <Text style={styles.cell}>{satuan}</Text>
-      <Text style={styles.cell}>{jumlahPenggunaan}</Text>
-    </View>
-  );
-};
-
-const Gap = ({ height }) => {
-  return <View style={{ height }} />;
-};
-
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    backgroundColor: '#f8f9fa',
   },
-  contentContainer: {
-    paddingBottom: 100,
+  containerHeader: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  titleHeader: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#333',
   },
-  welcomeText: {
+  subTitleHeader: {
     fontSize: 16,
-    marginBottom: 16,
+    fontWeight: '300',
+    color: '#666',
   },
-  datePickerContainer: {
+  containerSubHeader: {
+    marginHorizontal: 16,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  titleSubHeader: {
+    fontSize: 20,
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+    color: '#333',
+  },
+  containerHeaderTable: {
+    marginHorizontal: 16,
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  datePicker: {
-    flex: 1,
+    height: 50,
+    backgroundColor: '#ffffff',
+    borderWidth: 0.5,
     borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    height: 40,
-    marginRight: 8,
+    alignItems: 'center',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+    marginTop: 10,
   },
-  dateSeparator: {
-    marginHorizontal: 8,
+  boxTable: {
+    height: 50,
+    borderRightWidth: 0.5,
+    borderRightColor: '#ccc',
+    justifyContent: 'center',
   },
-  button: {
-    backgroundColor: '#FFA07A',
-    borderRadius: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+  titleHeaderTable: {
+    fontSize: 16,
+    alignSelf: 'center',
+    color: '#333',
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  textHeaderNo: {
+    width: 40,
   },
-  row: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  headerRow: {
-    backgroundColor: '#f8d7da',
-  },
-  cell: {
+  flex: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: 14,
+    marginTop: 10,
   },
-  headerCell: {
-    fontWeight: 'bold',
+  flex2: {
+    flex: 2,
+  },
+  flex3: {
+    flex: 3,
+  },
+  containerEmpty: {
+    height: 50,
+    borderWidth: 0.5,
+    borderColor: '#ccc',
+    marginHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  textEmpty: {
+    fontSize: 16,
+    fontWeight: '300',
+    color: '#999',
   },
 });
