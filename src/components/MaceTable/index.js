@@ -2,7 +2,8 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 
-const RowTable = ({no, name, stok, satuan}) => {
+
+const MaceTable = ({no, name, total_digunakan ,satuan}) => {
   return (
     <View style={styles.containerHeaderTable}>
         <View style={[styles.boxTable, styles.textHeaderNo]}>
@@ -12,20 +13,19 @@ const RowTable = ({no, name, stok, satuan}) => {
           <Text style={styles.titleHeaderTable}>{name}</Text>
         </View>
         <View style={[styles.boxTable, styles.flex]}>
-          <Text style={styles.titleHeaderTable}>{stok}</Text>
+          <Text style={styles.titleHeaderTable}>{total_digunakan}</Text>
         </View>
         <View style={[styles.boxTable, styles.flex2]}>
           <Text style={styles.titleHeaderTable}>{satuan}</Text>
       </View>
-    
+  
       </View>
   )
 }
 
 
 
-
-export default RowTable
+export default MaceTable
 
 const styles = StyleSheet.create({
     containerHeaderTable: {

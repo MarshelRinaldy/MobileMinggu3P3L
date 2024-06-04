@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { ScrollView, StatusBar, StyleSheet } from 'react-native';
-import { Gap, RowTable, Text } from '../../components';
+import { Gap, MaceTable, Text } from '../../components';
 import satellite from '../../services/satellite';
 
 export default function LaporanPenggunaan() {
@@ -54,12 +54,15 @@ export default function LaporanPenggunaan() {
           <View style={[styles.boxTable, styles.flex3]}>
             <Text style={styles.titleHeaderTable}>Nama Bahan</Text>
           </View>
+          
           <View style={[styles.boxTable, styles.flex]}>
             <Text style={styles.titleHeaderTable}>Total</Text>
           </View>
+
           <View style={[styles.boxTable, styles.flex2]}>
             <Text style={styles.titleHeaderTable}>Satuan</Text>
           </View>
+
         </View>
           <ScrollView style={styles.flex}>
             {dataReport.length === 0 ? (
@@ -69,7 +72,7 @@ export default function LaporanPenggunaan() {
             ) : (
               dataReport.map((item, index) => {
                 return (
-                  <RowTable
+                  <MaceTable
                     key={index}
                     no={index + 1}
                     name={item?.nama_bahan_baku}

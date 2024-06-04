@@ -40,7 +40,7 @@ export default function Customer() {
         </View>
         <Gap height={12} />
         <View style={styles.containerSubHeader}>
-          <Text style={styles.titleSubHeader}>Laporan Penjualan Bulanan</Text>
+          <Text style={styles.titleSubHeader}>Laporan Stok Bahan Baku</Text>
           <Gap height={3} />
           <Text style={styles.subTitleHeader}>Bulan : {valMonth}</Text>
           <Text style={styles.subTitleHeader}>Tahun : {valYear}</Text>

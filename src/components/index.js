@@ -6,6 +6,7 @@ import BoxArea from "./BoxArea";
 import ProdukArea from "./ProdukArea";
 import Gap from './Gap';
 import RowTable from "./RowTable";
+import MaceTable from "./MaceTable";
 import PesananDetails from "./PesananDetails";
 
 export { 
@@ -17,5 +18,6 @@ export {
     ProdukArea,
     Gap,
     RowTable,
+    MaceTable,
     PesananDetails
 };
